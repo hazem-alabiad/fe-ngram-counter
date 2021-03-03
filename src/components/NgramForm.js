@@ -9,14 +9,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
+  TextField
 } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import Alert from "@material-ui/lab/Alert";
+import { isEmpty } from "lodash";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { MY_MESSAGES } from "src/utils/constants";
-import CreateIcon from "@material-ui/icons/Create";
 
 // ####################################################
 // ##################    Helpers    ###################
@@ -29,6 +29,31 @@ const isSubmitDisabled = (formState) => {
   return formState.isValid ? false : true;
 };
 
+const renderTextField = (
+  register: Object,
+  name: String,
+  label: String,
+  helperText: String,
+  defaultValue: String,
+  errorObj: Object,
+  errorMsg: String
+) => (
+  <>
+    <TextField
+      inputRef={register({ min: 1 })}
+      name={name}
+      label={label}
+      variant="outlined"
+      margin="normal"
+      fullWidth={true}
+      helperText={helperText}
+      defaultValue={defaultValue}
+      error={errorObj ? true : false}
+    />
+    {renderError(errorObj, errorMsg)}
+  </>
+);
+
 // ####################################################
 // ###############    Main Component    ###############
 // ####################################################
@@ -39,8 +64,12 @@ const NgramForm = () => {
   });
 
   // #############    handlers   ##############
-  const onSubmit = (data) => reset();
+  const onSubmit = (data) => {
+    console.log(data);
+    reset();
+  };
 
+  console.log(formState.dirtyFields);
   return (
     <Card style={{ marginTop: "2rem" }}>
       <CardHeader title="N-Gram Counter" />
@@ -68,13 +97,13 @@ const NgramForm = () => {
                 <Select
                   inputRef={register({
                     name: "caseSensitive",
-                    value: "true",
+                    value: true,
                   })}
                   labelId="caseSensitive"
-                  defaultValue="true"
+                  defaultValue={true}
                 >
-                  <MenuItem value="true">True</MenuItem>
-                  <MenuItem value="false">False</MenuItem>
+                  <MenuItem value={true}>True</MenuItem>
+                  <MenuItem value={false}>False</MenuItem>
                 </Select>
                 <FormHelperText>
                   Boolean indicating whether we want to treat the input as such
@@ -82,33 +111,27 @@ const NgramForm = () => {
               </FormControl>
             </Grid>
             <Grid item>
-              <TextField
-                inputRef={register({ min: 1 })}
-                name="ngram"
-                label="N-Gram"
-                variant="outlined"
-                margin="dense"
-                fullWidth={true}
-                helperText="Positive number indicating the sequence length"
-                defaultValue="1"
-                error={errors.ngram ? true : false}
-              />
-              {renderError(errors.ngram, MY_MESSAGES.positive)}
+              {renderTextField(
+                register,
+                "ngram",
+                "N-Gram",
+                `Positive number indicating the sequence length`,
+                1,
+                errors.ngram,
+                MY_MESSAGES.positive
+              )}
             </Grid>
             <Grid item>
-              <TextField
-                inputRef={register}
-                name="length"
-                label="Length"
-                variant="outlined"
-                margin="dense"
-                fullWidth={true}
-                helperText="Non-negative number indicating the maximum length of the sorted
-            list of n-grams to return"
-                defaultValue="100"
-                error={errors.length ? true : false}
-              />
-              {renderError(errors.length, MY_MESSAGES.positive)}
+              {renderTextField(
+                register,
+                "length",
+                "Length",
+                `Non-negative number indicating the 
+              maximum length of the sorted list of n-grams to return`,
+                100,
+                errors.length,
+                MY_MESSAGES.positive
+              )}
             </Grid>
             <Grid item>
               <Button
@@ -124,7 +147,7 @@ const NgramForm = () => {
             <Grid item>
               {formState.isSubmitSuccessful &&
               !formState.isValid &&
-              formState.touched ? (
+              isEmpty(formState.dirtyFields) ? (
                 <Alert severity="success">{MY_MESSAGES.success}</Alert>
               ) : (
                 ""
