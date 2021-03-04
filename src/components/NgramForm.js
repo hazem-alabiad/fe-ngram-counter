@@ -13,10 +13,13 @@ import {
 } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import Alert from "@material-ui/lab/Alert";
+import { navigate } from "@reach/router";
 import { isEmpty } from "lodash";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { MY_MESSAGES } from "src/utils/constants";
+import { _MESSAGES } from "src/constants/messages";
+import { _ROUTERS } from "src/constants/routes";
+import { apiGetNgramCounts } from "../api/index";
 
 // ####################################################
 // ##################    Helpers    ###################
@@ -57,7 +60,7 @@ const renderTextField = (
 // ####################################################
 // ###############    Main Component    ###############
 // ####################################################
-const NgramForm = () => {
+const NgramForm = ({ setNgramCounts }) => {
   // ###############    State   ###############
   const { register, handleSubmit, errors, formState, reset } = useForm({
     mode: "onChange",
@@ -65,17 +68,21 @@ const NgramForm = () => {
 
   // #############    handlers   ##############
   const onSubmit = (data) => {
-    console.log(data);
+    // API call
+    apiGetNgramCounts(data).then((data) => {
+      setNgramCounts(data);
+      // go to view
+      navigate(_ROUTERS.view);
+    });
     reset();
   };
 
-  console.log(formState.dirtyFields);
   return (
     <Card style={{ marginTop: "2rem" }}>
       <CardHeader title="N-Gram Counter" />
       <CardActions>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container direction="column" spacing={3}>
+          <Grid container direction="column" spacing={1}>
             <Grid item>
               <TextField
                 inputRef={register({ required: true })}
@@ -89,17 +96,17 @@ const NgramForm = () => {
                 rows={3}
                 error={errors.body ? true : false}
               />
-              {renderError(errors.body, MY_MESSAGES.required)}
+              {renderError(errors.body, _MESSAGES.required)}
             </Grid>
             <Grid item>
               <FormControl fullWidth={true}>
-                <InputLabel id="caseSensitive">Case Sensitive</InputLabel>
+                <InputLabel id="case_sensitive">Case Sensitive</InputLabel>
                 <Select
                   inputRef={register({
-                    name: "caseSensitive",
+                    name: "case_sensitive",
                     value: true,
                   })}
-                  labelId="caseSensitive"
+                  labelId="case_sensitive"
                   defaultValue={true}
                 >
                   <MenuItem value={true}>True</MenuItem>
@@ -118,7 +125,7 @@ const NgramForm = () => {
                 `Positive number indicating the sequence length`,
                 1,
                 errors.ngram,
-                MY_MESSAGES.positive
+                _MESSAGES.positive
               )}
             </Grid>
             <Grid item>
@@ -130,7 +137,16 @@ const NgramForm = () => {
               maximum length of the sorted list of n-grams to return`,
                 100,
                 errors.length,
-                MY_MESSAGES.positive
+                _MESSAGES.positive
+              )}
+            </Grid>
+            <Grid item>
+              {formState.isSubmitSuccessful &&
+              !formState.isValid &&
+              isEmpty(formState.dirtyFields) ? (
+                <Alert severity="success">{_MESSAGES.success}</Alert>
+              ) : (
+                ""
               )}
             </Grid>
             <Grid item>
@@ -143,15 +159,6 @@ const NgramForm = () => {
               >
                 Submit
               </Button>
-            </Grid>
-            <Grid item>
-              {formState.isSubmitSuccessful &&
-              !formState.isValid &&
-              isEmpty(formState.dirtyFields) ? (
-                <Alert severity="success">{MY_MESSAGES.success}</Alert>
-              ) : (
-                ""
-              )}
             </Grid>
           </Grid>
         </form>

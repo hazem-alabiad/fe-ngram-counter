@@ -1,20 +1,21 @@
-import { Grid } from "@material-ui/core";
-import React from "react";
-import NgramForm from "./NgramForm";
+import { Router } from "@reach/router";
+import React, { useState } from "react";
+import { _ROUTERS } from "../constants/routes";
+import Home from "./Home";
+import View from "./View";
 
+// ####################################################
+// ###############    Main Component    ###############
+// ####################################################
 const Main = () => {
+  // ###############    State   ###############
+  const [ngramCounts, setNgramCounts] = useState([]);
+
   return (
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justify="center"
-    >
-      <Grid item xs={10}>
-        <NgramForm />
-      </Grid>
-    </Grid>
+    <Router>
+      <Home path={_ROUTERS.home} setNgramCounts={setNgramCounts} />
+      <View path={_ROUTERS.view} ngramCounts={ngramCounts} />
+    </Router>
   );
 };
 

@@ -1,6 +1,7 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import React, { Suspense } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import React from "react";
 import ReactDOM from "react-dom";
 import Main from "./components/Main";
 import "./index.css";
@@ -14,10 +15,8 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <Suspense>
-      <CssBaseline />
-      <Main />
-    </Suspense>
+    <CssBaseline />
+    <Main />
   </ThemeProvider>,
   document.getElementById("root")
 );
