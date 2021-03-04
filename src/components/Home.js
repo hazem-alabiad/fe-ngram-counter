@@ -1,12 +1,13 @@
 import { Grid } from "@material-ui/core";
 import PropTypes from "prop-types";
 import React from "react";
+import Animated from "./Animated";
 import NgramForm from "./NgramForm";
 
 // ####################################################
 // ###############    Main Component    ###############
 // ####################################################
-const Home = ({ setNgramCounts }) => {
+const HomeNotAnimated = ({ setNgramCounts }) => {
   return (
     <Grid
       container
@@ -19,6 +20,13 @@ const Home = ({ setNgramCounts }) => {
         <NgramForm setNgramCounts={setNgramCounts} />
       </Grid>
     </Grid>
+  );
+};
+
+const Home = ({ setNgramCounts }) => {
+  // ###############    State   ###############
+  return (
+    <Animated comp={<HomeNotAnimated setNgramCounts={setNgramCounts} />} />
   );
 };
 

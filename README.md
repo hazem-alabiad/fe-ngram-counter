@@ -19,6 +19,7 @@ It counts the frequency of ngrams in a given string
 - `prop-types` for type checking.
 - `react-hook-form` for managing the forms.
 - `lodash` for helper functions.
+- `react-spring` for Animation.
 
 # Project Structure
 

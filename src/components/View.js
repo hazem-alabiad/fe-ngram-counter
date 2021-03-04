@@ -5,16 +5,17 @@ import {
   makeStyles,
   Tab,
   Tabs,
-  Typography,
+  Typography
 } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import { navigate } from "@reach/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Container } from "reactstrap";
+import { _ROUTERS } from "../constants/routes";
+import Animated from "./Animated";
 import ChartView from "./ChartView";
 import TableView from "./TableView";
-import HomeIcon from "@material-ui/icons/Home";
-import { navigate } from "@reach/router";
-import { _ROUTERS } from "../constants/routes";
 
 // ####################################################
 // ###################    Helpers   ###################
@@ -60,7 +61,7 @@ TabPanel.propTypes = {
 // ####################################################
 // ###############    Main Component    ###############
 // ####################################################
-const View = ({ ngramCounts }) => {
+const ViewNotAnimated = ({ ngramCounts }) => {
   // ###############    State   ###############
   const [value, setValue] = useState(0);
   const classes = useStyles();
@@ -123,6 +124,10 @@ const View = ({ ngramCounts }) => {
       </div>
     </Container>
   );
+};
+
+const View = ({ ngramCounts }) => {
+  return <Animated comp={<ViewNotAnimated ngramCounts={ngramCounts} />} />;
 };
 
 export default View;
